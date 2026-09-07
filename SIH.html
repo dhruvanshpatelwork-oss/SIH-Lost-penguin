@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0d1724">
+  <meta name="description" content="WeatherGPT converts weather data into practical decisions.">
+  <title>WeatherGPT — Forecasts to Decisions</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+  <div class="scene" aria-hidden="true">
+    <div class="sun-glow"></div>
+    <div class="rays"></div>
+    <div class="rain" id="rain"></div>
+    <div class="lightning"></div>
+    <div class="cloud cloud-1"></div>
+    <div class="cloud cloud-2"></div>
+    <div class="cloud cloud-3"></div>
+  </div>
+
+  <main class="app">
+    <aside class="sidebar">
+      <div class="brand-row">
+        <div class="logo" aria-hidden="true">
+          <svg width="23" height="23" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+          </svg>
+        </div>
+
+        <div>
+          <div class="brand-name">WeatherGPT</div>
+          <div class="brand-tagline">From forecasts to better decisions</div>
+        </div>
+      </div>
+
+      <section class="dashboard">
+        <form class="location-search" id="locationForm">
+          <input
+            id="locationInput"
+            type="search"
+            placeholder="Search any city or town…"
+            autocomplete="off"
+            aria-label="Search city or town"
+          >
+          <button class="search-btn" type="submit">Search</button>
+        </form>
+
+        <article class="hero-card">
+          <div class="hero-top">
+            <div>
+              <div class="hero-location" id="heroLocation">Kottayam, Kerala</div>
+              <div class="hero-updated" id="updatedLabel">Loading live conditions…</div>
+            </div>
+
+            <div class="hero-icon" id="heroIcon" aria-hidden="true"></div>
+          </div>
+
+          <div class="hero-condition" id="heroCondition">Loading…</div>
+          <div class="hero-temperature" id="heroTemperature">--°</div>
+          <div class="hero-feels" id="heroFeels">Feels like --°</div>
+        </article>
+
+        <article class="insight-card">
+          <div class="card-heading">
+            <h2>Decision insight</h2>
+            <span class="tiny-badge">LIVE ANALYSIS</span>
+          </div>
+
+          <div>
+            <div class="insight-main" id="insightMain">Preparing your local advice…</div>
+            <div class="insight-detail" id="insightDetail">
+              Weather signals will appear here.
+            </div>
+          </div>
+
+          <div class="insight-risk" id="insightRisk">
+            <span class="risk-dot"></span>
+            Checking risk level
+          </div>
+        </article>
+      </section>
+
+      <section class="metrics" aria-label="Current weather metrics">
+        <div class="metric">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2s6 7.2 6 11.5a6 6 0 0 1-12 0C6 9.2 12 2 12 2Z"/>
+          </svg>
+          <span class="metric-value" id="humidityValue">--</span>
+          <span class="metric-label">Humidity</span>
+        </div>
+
+        <div class="metric">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9.6 4.6A2 2 0 1 1 11 8H2M12.6 19.4A2 2 0 1 0 14 16H2M17.6 7.6A2 2 0 1 1 19 11H2"/>
+          </svg>
+          <span class="metric-value" id="windValue">--</span>
+          <span class="metric-label">Wind</span>
+        </div>
+
+        <div class="metric">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M16 13v8M8 13v8M12 15v8M20 16.58A5 5 0 0 0 18 7h-1.26A8 8 0 1 0 4 15.25"/>
+          </svg>
+          <span class="metric-value" id="rainValue">--</span>
+          <span class="metric-label">Rain chance</span>
+        </div>
+
+        <div class="metric">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+               stroke="currentColor" stroke-width="2"
+               stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 12h18M3 12a9 9 0 0 1 18 0M3 12a9 9 0 0 0 18 0"/>
+          </svg>
+          <span class="metric-value" id="aqiValue">--</span>
+          <span class="metric-label">Air quality</span>
+        </div>
+      </section>
+
+      <section class="forecast-card">
+        <div class="card-heading">
+          <h2>Next hours</h2>
+          <span class="tiny-badge" id="forecastSource">LIVE</span>
+        </div>
+
+        <div class="forecast-scroll" id="hourlyForecast">
+          <div class="loading">Loading hourly forecast…</div>
+        </div>
+      </section>
+    </aside>
+
+    <section class="main-panel">
+      <header class="topbar">
+        <div class="topbar-title">
+          <span class="live-dot"></span>
+          Hyperlocal weather intelligence
+        </div>
+
+        <div class="top-actions">
+          <select class="select" id="languageSelect" aria-label="Language">
+            <option value="en">English</option>
+            <option value="ml">മലയാളം</option>
+          </select>
+
+          <button class="location-btn" id="useLocationBtn" type="button">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            <span id="locationLabel">Kottayam</span>
+          </button>
+        </div>
+      </header>
+
+      <section class="chat-section">
+        <div class="chat-messages" id="messages" aria-live="polite">
+          <div class="welcome" id="welcome">
+            <div class="welcome-message">
+              Ask me whether it is safe to travel, when rain is likely,
+              whether you need an umbrella, or what the next seven days look like.
+            </div>
+
+            <div class="quick-actions">
+              <button class="quick-action" type="button" data-question="Can I travel outside today?">
+                Can I travel today?
+              </button>
+              <button class="quick-action" type="button" data-question="Will it rain tomorrow?">
+                Rain tomorrow?
+              </button>
+              <button class="quick-action" type="button" data-question="Show the 7-day forecast">
+                7-day forecast
+              </button>
+              <button class="quick-action" type="button" data-question="Any severe weather alerts?">
+                Weather alerts
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <form class="chat-input" id="chatForm">
+          <button class="icon-btn" id="micBtn" type="button" title="Voice input" aria-label="Voice input">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <rect x="9" y="2" width="6" height="12" rx="3"/>
+              <path d="M5 10a7 7 0 0 0 14 0M12 19v3"/>
+            </svg>
+          </button>
+
+          <input
+            id="userInput"
+            type="text"
+            placeholder="Ask about the weather…"
+            autocomplete="off"
+            aria-label="Ask about the weather"
+          >
+
+          <button class="send-btn" type="submit" title="Send" aria-label="Send">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
+                 stroke="currentColor" stroke-width="2"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="m22 2-7 20-4-9-9-4Z"/>
+              <path d="M22 2 11 13"/>
+            </svg>
+          </button>
+        </form>
+      </section>
+    </section>
+  </main>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
